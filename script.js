@@ -1,27 +1,36 @@
-fetch("http://127.0.0.1:8000/match/449012")
+fetch("http://127.0.0.1:8000/matchs/results")
   .then((res) => res.json())
   .then((data) => {
     console.log(data);
 
     let content = document.getElementById("content");
-    let title = document.createElement("h1");
-    title.innerText = `${data.score_named_with_dash}`;
 
+    let title = document.createElement("h1");
+    title.innerText = "Liste des matchs";
     content.appendChild(title);
 
-    let games = document.createElement("div");
-    games.classList.add("games");
-    let gamesArray = Object.values(data.games);
+    let matchList = document.createElement("div");
+    matchList.classList.add("match-list");
 
-    for (let game of gamesArray) {
-      console.log(
-        `Manche ${game.game} : ${game.team_1_score} - ${game.team_2_score}`
-      );
+    for (const matchId in data) {
+      let match = data[matchId];
 
-      let gameElement = document.createElement("p");
-      gameElement.innerText = `Manche ${game.game} : ${game.team_1_score} - ${game.team_2_score}`;
-      games.appendChild(gameElement);
+      let matchContainer = document.createElement("div");
+      matchContainer.classList.add("match-container");
+
+      let matchTitle = document.createElement("p");
+      matchTitle.innerText = `${match.formatted_scores.score_named_with_dash}`;
+      matchContainer.appendChild(matchTitle);
+
+      // Redirige vers match.html en passant l'ID dans l'URL
+      let matchLink = document.createElement("a");
+      matchLink.href = `match.html?id=${match.match_id}`;
+      matchLink.innerText = "Voir les détails du match";
+      matchContainer.appendChild(matchLink);
+
+      matchList.appendChild(matchContainer);
     }
-    content.appendChild(games);
+
+    content.appendChild(matchList);
   })
-  .catch((error) => console.error("Error:", error));
+  .catch((error) => console.error("Erreur:", error));
